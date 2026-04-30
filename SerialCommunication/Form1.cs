@@ -54,7 +54,25 @@ namespace SerialCommunication
 
         private void buttonConnect_Click(object sender, EventArgs e)
         {
-            // abc def ghi jkl
+            try 
+            {
+
+            if (serialPortArduino.IsOpen)
+                {
+                    // ik heb een verbinding -> de gebruiker wil deze verbreken
+                }
+
+            else 
+                {
+                // ik heb geen verbinding -> de gerbuiker wil een verbinding maken
+                serialPortArduino.PortName = (string) comboBoxPoort.SelectedItem;
+                }
+            }
+
+            catch (Exception exception)
+            {
+                labelStatus.Text = "Error:" + exception.Message;
+            }
         }
     }
 }
