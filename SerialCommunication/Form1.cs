@@ -334,5 +334,59 @@ namespace SerialCommunication
 
             }
         }
+
+        private void timerOefening5_Tick(object sender, EventArgs e)
+        {
+            try
+            {
+                if (serialPortArduino.IsOpen)
+                {
+                    serialPortArduino.ReadExisting();
+                    string commando = "get a0";
+
+                    serialPortArduino.WriteLine(commando);
+                    string antwoord = serialPortArduino.ReadLine();
+                    antwoord = antwoord.TrimEnd();
+                    antwoord = antwoord.Substring(4);
+                    int value = Int32.Parse(antwoord);
+                    double rico = 0.039;
+                    double temp = (Math.Round(rico * value, 1) + 5);
+                    string gewenst = String.Format("{0} °C", temp.ToString("F1"));
+
+                    labelGewensteTemp.Text = gewenst;
+                    commando = "get a1";
+
+                    serialPortArduino.WriteLine(commando);
+                    string antwoord2 = serialPortArduino.ReadLine();
+                    antwoord2 = antwoord2.TrimEnd();
+                    antwoord2 = antwoord2.Substring(4);
+                    int value2 = Int32.Parse(antwoord2);
+                    double rico2 = 0.488758553;
+                    double meting = Math.Round((rico2 * value2) - 273, 1);
+                    string gemeten = String.Format("{0} °C", meting.ToString("F1"));
+
+                    labelHuidigeTemp.Text = gemeten;
+                    if (meting < temp) commando = "set d2 high";
+                    else commando = "set d2 low";
+                    serialPortArduino.WriteLine(commando);
+
+                }
+                else
+                {
+                    labelStatus.Text = "Kabel niet verbonden";
+                    radioButtonVerbonden.Checked = false;
+                    buttonConnect.Text = "Connect";
+                }
+            }
+            catch (Exception exception)
+            {
+                labelStatus.Text = "Error: " + exception.Message;
+                serialPortArduino.Close();
+                radioButtonVerbonden.Checked = false;
+                buttonConnect.Text = "Connect";
+            }
+        }
+
+
     }
 }
